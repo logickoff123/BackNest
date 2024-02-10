@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common'; // корневой файл (контролеры провайдеоы)
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getPostgresConfig } from './configs/postgress.config';
 import { PromoModule } from './promo/promo.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { PromoModule } from './promo/promo.module';
       useFactory: getPostgresConfig,
     }),
     PromoModule,
+    CategoryModule,
   ],
   controllers: [],
   providers: [],
