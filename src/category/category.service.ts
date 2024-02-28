@@ -20,7 +20,7 @@ export class CategoryService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} category`;
+    return this.repository.findOneBy({ id });
   }
 
   update(id: number, updateCategoryDto: UpdateCategoryDto) {

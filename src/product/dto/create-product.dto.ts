@@ -14,13 +14,7 @@ export class CreateProductDto {
   image: Express.Multer.File;
 
   @IsString()
-  name: string = 'Название пиццы';
-
-  @IsString()
-  description: string = 'Состав';
-
-  @IsString()
-  sizes: string = '20,30,40';
+  name: string = 'Название ';
 
   @IsString()
   prices: string = '400,599,700';

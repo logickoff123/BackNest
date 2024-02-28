@@ -6,7 +6,9 @@ import { getPostgresConfig } from './configs/postgress.config';
 import { PromoModule } from './promo/promo.module';
 import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
-
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { CartModule } from './cart/cart.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,6 +22,9 @@ import { ProductModule } from './product/product.module';
     PromoModule,
     CategoryModule,
     ProductModule,
+    UsersModule,
+    AuthModule,
+    CartModule,
   ],
   controllers: [],
   providers: [],
