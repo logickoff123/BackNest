@@ -11,6 +11,11 @@ export class UpdateCartDto extends PartialType(CreateCartDto) {
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsNumberString()
+  userId: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
   @IsNumber()
   quantity: number;
 }

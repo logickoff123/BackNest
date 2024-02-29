@@ -22,4 +22,5 @@ export class UserEntity {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+  cart: any;
 }
