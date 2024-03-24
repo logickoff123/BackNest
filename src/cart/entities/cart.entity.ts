@@ -1,27 +1,21 @@
-import { ProductEntity } from 'src/product/entities/product.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { UserEntity } from 'src/users/entities/user.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { ProductEntity } from 'src/product/entities/product.entity';
 
 @Entity('cart')
-export class CartEntity {
+export class Cart {
   @PrimaryGeneratedColumn()
   id: number;
-  @ManyToOne(() => UserEntity, (users) => users.cart)
-  @JoinColumn()
-  user: UserEntity;
-
-  @ManyToOne(() => ProductEntity, (product) => product.carts, {
-    eager: true,
-  })
-  @JoinColumn()
-  product: ProductEntity;
 
   @Column()
   quantity: number;
+
+  @Column()
+  totalPrice: number;
+
+  @ManyToOne(() => UserEntity, (user) => user.cart)
+  user: UserEntity;
+
+  @ManyToOne(() => ProductEntity, (product) => product.carts)
+  product: ProductEntity;
 }

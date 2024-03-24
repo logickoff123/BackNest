@@ -3,43 +3,39 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
+  Put,
   Delete,
 } from '@nestjs/common';
 import { CartService } from './cart.service';
-import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { CreateCartDto } from 'src/cart/dto/create-cart.dto';
+import { UpdateCartDto } from 'src/cart/dto/update-cart.dto';
+import { Cart } from './entities/cart.entity';
 
-@ApiTags('cart')
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
-  @ApiConsumes('multipart/form-data')
-  @Post()
-  create(@Body() createCartDto: CreateCartDto) {
-    return this.cartService.create(createCartDto);
+  @Get(':userId')
+  getUserCart(@Param('userId') userId: number): Promise<Cart[]> {
+    return this.cartService.getUserCart(userId);
   }
 
-  @Get()
-  findAll() {
-    return this.cartService.findAll();
+  @Post()
+  addToCart(@Body() createCartDto: CreateCartDto): Promise<Cart> {
+    return this.cartService.addToCart(createCartDto);
   }
-  @ApiConsumes('multipart/form-data')
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cartService.findOne(+id);
+
+  @Put(':cartId')
+  updateCart(
+    @Param('cartId') cartId: number,
+    @Body() updateCartDto: UpdateCartDto,
+  ): Promise<Cart> {
+    return this.cartService.updateCart(cartId, updateCartDto);
   }
-  @ApiConsumes('multipart/form-data')
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {
-    return this.cartService.update(+id, updateCartDto);
-  }
-  @ApiConsumes('multipart/form-data')
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cartService.remove(+id);
+
+  @Delete(':cartId')
+  removeFromCart(@Param('cartId') cartId: number): Promise<void> {
+    return this.cartService.removeFromCart(cartId);
   }
 }

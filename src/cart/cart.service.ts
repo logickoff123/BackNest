@@ -1,58 +1,44 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
-import { CartEntity } from './entities/cart.entity';
-import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ProductEntity } from 'src/product/entities/product.entity';
+import { Repository } from 'typeorm';
+import { Cart } from './entities/cart.entity';
+import { CreateCartDto } from 'src/cart/dto/create-cart.dto';
+import { UpdateCartDto } from 'src/cart/dto/update-cart.dto';
+import { FindManyOptions } from 'typeorm';
 
 @Injectable()
 export class CartService {
   constructor(
-    @InjectRepository(CartEntity)
-    private cartRepository: Repository<CartEntity>,
-
-    @InjectRepository(ProductEntity)
-    private productRepository: Repository<ProductEntity>,
+    @InjectRepository(Cart)
+    private readonly cartRepository: Repository<Cart>,
   ) {}
-  async create(dto: CreateCartDto) {
-    const cart = new CartEntity();
-    cart.quantity = dto.quantity;
 
-    const newCart = await this.cartRepository.save(cart);
-
-    const product = await this.productRepository.findOne({
-      where: { id: dto.productId },
-      relations: ['carts'],
-    });
-
-    product.carts.push(cart);
-
-    await this.productRepository.save(product);
-
-    return newCart;
+  async getUserCart(userId: number): Promise<Cart[]> {
+    const options: FindManyOptions<Cart> = {
+      where: { userId: userId },
+    };
+    return this.cartRepository.find(options);
   }
 
-  async findAll() {
-    return this.cartRepository.find();
+  async addToCart(createCartDto: CreateCartDto): Promise<Cart> {
+    const newCartItem = this.cartRepository.create(createCartDto);
+    return this.cartRepository.save(newCartItem);
   }
 
-  async findOne(id: number) {
-    return this.cartRepository.findOneBy({ id });
-  }
-
-  async update(id: number, dto: UpdateCartDto) {
-    const toUpdate = await this.cartRepository.findOneBy({ id });
-    if (!toUpdate) {
-      throw new BadRequestException(`Записи с id=${id} не найдено`);
+  async updateCart(
+    cartId: number,
+    updateCartDto: UpdateCartDto,
+  ): Promise<Cart> {
+    const cartItem = await this.cartRepository.findOne(cartId);
+    if (!cartItem) {
+      //
     }
-    if (dto.quantity) {
-      toUpdate.quantity = dto.quantity;
-    }
-    return this.cartRepository.save(toUpdate);
+    //
+    this.cartRepository.merge(cartItem, updateCartDto);
+    return this.cartRepository.save(cartItem);
   }
 
-  async remove(id: number) {
-    return this.cartRepository.delete(id);
+  async removeFromCart(cartId: number): Promise<void> {
+    await this.cartRepository.delete(cartId);
   }
 }

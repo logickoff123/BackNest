@@ -10,7 +10,7 @@ export class CreateCartDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumberString()
-  userId: number;
+  totalPrice: number;
 
   @ApiProperty()
   @IsNotEmpty()
