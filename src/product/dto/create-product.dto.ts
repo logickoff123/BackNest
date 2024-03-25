@@ -16,8 +16,8 @@ export class CreateProductDto {
   @IsString()
   name: string = 'Название ';
 
-  @IsString()
-  prices: string = '400,599,700';
+  @IsNumberString()
+  price: number;
 
   @IsNumberString()
   categoryId: number;

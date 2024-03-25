@@ -1,21 +1,22 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { UserEntity } from 'src/users/entities/user.entity';
+import { ApiHideProperty } from '@nestjs/swagger';
 import { ProductEntity } from 'src/product/entities/product.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('cart')
-export class Cart {
+export class CartEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @ApiHideProperty()
+  @OneToMany(() => ProductEntity, (product) => product.cart)
+  products: ProductEntity[];
+
+  @Column()
+  productId: number;
 
   @Column()
   quantity: number;
 
   @Column()
-  totalPrice: number;
-
-  @ManyToOne(() => UserEntity, (user) => user.cart)
-  user: UserEntity;
-
-  @ManyToOne(() => ProductEntity, (product) => product.carts)
-  product: ProductEntity;
+  price: number;
 }

@@ -25,7 +25,7 @@ export class ProductService {
     const product = new ProductEntity();
     product.image = image.filename;
     product.name = dto.name;
-    product.prices = dto.prices.split(',').map((x) => +x);
+    product.price = dto.price;
 
     const newProduct = await this.productRepository.save(product);
 
@@ -67,7 +67,7 @@ export class ProductService {
       throw new BadRequestException(`Записи с id=${id} не найдено`);
     }
     if (dto.name) toUpdate.name = dto.name;
-    if (dto.prices) toUpdate.prices = dto.prices.split(',').map((x) => +x);
+    if (dto.price) toUpdate.price = dto.price;
     if (dto.categoryId) {
       const category = await this.categoryRepository.findOne({
         where: { id: dto.categoryId },
