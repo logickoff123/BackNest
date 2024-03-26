@@ -1,4 +1,5 @@
 import { Basket } from 'src/basket/entities/basket.entity';
+import { Order } from 'src/order/entities/order.entity';
 import {
   Column,
   OneToOne,
@@ -24,8 +25,10 @@ export class UserEntity {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
-  cart: any;
-  orders: any;
+
+  @OneToOne(() => Order, (order) => order.user)
+  order: Order;
+
   @OneToOne(() => Basket, (basket) => basket.user)
   basket: Basket;
 }

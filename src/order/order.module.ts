@@ -1,14 +1,19 @@
-// import { Module } from '@nestjs/common';
-// import { TypeOrmModule } from '@nestjs/typeorm';
-// import { OrderEntity } from './entities/order.entity';
-// import { OrderController } from './order.controller';
-// import { OrderService } from './order.service';
-// import { ConfigModule } from '@nestjs/config';
-// import { CartEntity } from 'src/cart/entities/cart.entity';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Order } from 'src/order/entities/order.entity';
+import { OrderService } from './order.service';
+import { OrderController } from './order.controller';
+import { OrderItemEntity } from './entities/order-item.entity';
+import { UsersModule } from 'src/users/users.module';
+import { BasketModule } from 'src/basket/basket.module';
 
-// @Module({
-//   imports: [ConfigModule, TypeOrmModule.forFeature([OrderEntity, CartEntity])],
-//   controllers: [OrderController],
-//   providers: [OrderService],
-// })
-// export class OrderModule {}
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([Order, OrderItemEntity]),
+    UsersModule,
+    BasketModule,
+  ],
+  controllers: [OrderController],
+  providers: [OrderService],
+})
+export class OrderModule {}

@@ -1,40 +1,34 @@
-// import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
+import { OrderItemEntity } from './order-item.entity';
+import { UserEntity } from 'src/users/entities/user.entity';
 
-// @Entity('order')
-// export class OrderEntity {
-//   @PrimaryGeneratedColumn()
-//   id: number;
+@Entity()
+export class Order {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-//   @Column()
-//   fullname: string;
+  @Column()
+  Fullname: string;
 
-//   @Column()
-//   phone: string;
+  @Column()
+  deladdress: string;
 
-//   @Column()
-//   email: string;
+  @Column()
+  totalPrice: number;
 
-//   @Column()
-//   city: string;
-
-//   @Column()
-//   street: string;
-
-//   @Column()
-//   apartment: string;
-
-//   @Column()
-//   entrance: string;
-
-//   @Column()
-//   floor: string;
-
-//   @Column()
-//   intercom: string;
-
-//   @Column()
-//   products: string;
-
-//   @Column()
-//   userId: number;
-// }
+  @CreateDateColumn()
+  createdAt: Date;
+  @OneToOne(() => UserEntity, (user) => user.order)
+  @JoinColumn()
+  user: UserEntity;
+  @OneToMany(() => OrderItemEntity, (orderItems) => orderItems.order)
+  orderItems: OrderItemEntity[];
+}

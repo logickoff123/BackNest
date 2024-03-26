@@ -1,54 +1,85 @@
-// import { Injectable } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { Repository } from 'typeorm';
-// import { OrderEntity } from 'src/order/entities/order.entity';
-// import { CartEntity } from 'src/cart/entities/cart.entity';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Order } from 'src/order/entities/order.entity';
+import { Repository } from 'typeorm';
+import { OrderItemEntity } from './entities/order-item.entity';
+import { BasketService } from 'src/basket/basket.service';
+import { UserEntity } from 'src/users/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
+import { CreateOrderDto } from './dto/create-order.dto';
 
-// @Injectable()
-// export class OrderService {
-//   constructor(
-//     @InjectRepository(OrderEntity)
-//     private orderRepository: Repository<OrderEntity>,
-//     @InjectRepository(CartEntity)
-//     private cartRepository: Repository<CartEntity>,
-//   ) {}
+@Injectable()
+export class OrderService {
+  constructor(
+    @InjectRepository(Order)
+    private orderRepository: Repository<Order>,
+    @InjectRepository(OrderItemEntity)
+    private orderitemRepository: Repository<OrderItemEntity>,
+    private readonly basketService: BasketService,
+    private readonly userService: UsersService,
+  ) {}
+  async order(req: any, dto: CreateOrderDto) {
+    const userBasket = await this.basketService.getUserBasket(req.user);
+    if (userBasket.BasketItems.length == 0) {
+      throw new BadRequestException(
+        'Вы не можете оформить заказ с пустой корзиной',
+      );
+    }
+    const order = await this.orderRepository.create({
+      Fullname: dto.Fullname,
+      deladdress: dto.deladdress,
+      totalPrice: 0,
+      user: req.user,
+      orderItems: [],
+    });
 
-//   async createOrder(
-//     id: number,
-//     floor: string,
-//     fullname: string,
-//     phone: string,
-//     email: string,
-//     city: string,
-//     street: string,
-//     apartment: string,
-//     entrance: string,
-//     intercom: string,
-//   ): Promise<OrderEntity> {
-//     const cartItems = await this.cartRepository.find();
-//     const cartProducts = cartItems.map((cartItem) =>
-//       cartItem.productId.toString(),
-//     );
+    for (let i = 0; i <= userBasket.BasketItems.length; i++) {
+      if (userBasket.BasketItems[i] && userBasket.BasketItems[i].product) {
+        const orderItem = this.orderitemRepository.create({
+          product: userBasket.BasketItems[i].product,
+        });
+        orderItem.orderPrice = userBasket.BasketItems[i].basketPrice;
+        await this.orderitemRepository.save(orderItem);
+        order.orderItems.push(orderItem);
+      }
+    }
+    if (order.orderItems == null) {
+      return 0;
+    }
+    let sum = 0;
+    order.orderItems.forEach((a) => (sum += a.orderPrice));
+    order.totalPrice = sum;
 
-//     const newOrder = new OrderEntity();
-//     newOrder.products = cartProducts.join(', ');
-//     newOrder.floor = floor;
-//     newOrder.fullname = fullname;
-//     newOrder.phone = phone;
-//     newOrder.email = email;
-//     newOrder.city = city;
-//     newOrder.street = street;
-//     newOrder.apartment = apartment;
-//     newOrder.entrance = entrance;
-//     newOrder.intercom = intercom;
-//     newOrder.userId = id;
+    order.user = req.user;
+    const orderNew = await this.orderRepository.save(order);
+    await this.basketService.removeBasket(req.user.id);
+    return orderNew;
+  }
 
-//     return await this.orderRepository.save(newOrder);
-//   }
-
-//   async getOrderById(id: number): Promise<OrderEntity> {
-//     return this.orderRepository.findOne({
-//       where: { id },
-//     });
-//   }
-// }
+  async getItemsFromBasket(user: any) {
+    const items = await this.basketService.findAll(user);
+    return items;
+  }
+  async create(user: UserEntity, dto: CreateOrderDto) {
+    const order = new Order();
+    order.Fullname = dto.Fullname;
+    order.deladdress = dto.deladdress;
+    order.totalPrice = 0;
+    order.user = user;
+    await this.orderRepository.save(order);
+    return order;
+  }
+  async getOrdersUser(req: any) {
+    const userOrder = await this.orderRepository.find({
+      relations: {
+        orderItems: {
+          product: true,
+        },
+      },
+      where: {
+        user: req.user,
+      },
+    });
+    return userOrder;
+  }
+}

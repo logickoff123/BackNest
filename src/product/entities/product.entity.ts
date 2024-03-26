@@ -10,6 +10,7 @@ import {
 import { CategoryEntity } from 'src/category/entities/category.entity';
 import { ApiHideProperty } from '@nestjs/swagger';
 import { BasketItemEntity } from 'src/basket/entities/basket-item.entity';
+import { OrderItemEntity } from 'src/order/entities/order-item.entity';
 
 @Entity('product')
 export class ProductEntity {
@@ -34,4 +35,7 @@ export class ProductEntity {
   @ApiHideProperty()
   @OneToMany(() => BasketItemEntity, (basket) => basket.product)
   basket: BasketItemEntity[];
+  @ApiHideProperty()
+  @OneToMany(() => OrderItemEntity, (orderItems) => orderItems.product)
+  orderItems: BasketItemEntity[];
 }
