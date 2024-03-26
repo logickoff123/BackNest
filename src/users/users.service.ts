@@ -4,15 +4,17 @@ import { Repository } from 'typeorm';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserEntity } from './entities/user.entity';
+import { BasketService } from 'src/basket/basket.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
-    private repository: Repository<UserEntity>,
+    private readonly userRepository: Repository<UserEntity>,
+    private readonly basketService: BasketService,
   ) {}
 
-  async create(dto: CreateUserDto) {
+  async create(dto: CreateUserDto): Promise<UserEntity> {
     const existingUser = await this.findByUsername(dto.username);
 
     if (existingUser) {
@@ -21,14 +23,21 @@ export class UsersService {
       );
     }
 
-    return this.repository.save(dto);
+    const user = await this.userRepository.save(dto); // Сохраняем пользовате
+    // Создаем корзину после регистрации
+    const basket = await this.basketService.create(user);
+    user.basket = basket;
+
+    await this.userRepository.save(user); // Обновляем пользователя с корзиной
+
+    return user;
   }
 
   async findByUsername(username: string) {
-    return this.repository.findOneBy({ username });
+    return this.userRepository.findOneBy({ username });
   }
 
   async findById(id: number) {
-    return this.repository.findOneBy({ id });
+    return this.userRepository.findOneBy({ id });
   }
 }

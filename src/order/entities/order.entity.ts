@@ -1,40 +1,40 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+// import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('order')
-export class OrderEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+// @Entity('order')
+// export class OrderEntity {
+//   @PrimaryGeneratedColumn()
+//   id: number;
 
-  @Column()
-  fullname: string;
+//   @Column()
+//   fullname: string;
 
-  @Column()
-  phone: string;
+//   @Column()
+//   phone: string;
 
-  @Column()
-  email: string;
+//   @Column()
+//   email: string;
 
-  @Column()
-  city: string;
+//   @Column()
+//   city: string;
 
-  @Column()
-  street: string;
+//   @Column()
+//   street: string;
 
-  @Column()
-  apartment: string;
+//   @Column()
+//   apartment: string;
 
-  @Column()
-  entrance: string;
+//   @Column()
+//   entrance: string;
 
-  @Column()
-  floor: string;
+//   @Column()
+//   floor: string;
 
-  @Column()
-  intercom: string;
+//   @Column()
+//   intercom: string;
 
-  @Column()
-  products: string;
+//   @Column()
+//   products: string;
 
-  @Column()
-  userId: number;
-}
+//   @Column()
+//   userId: number;
+// }

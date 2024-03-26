@@ -4,11 +4,12 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { CategoryEntity } from 'src/category/entities/category.entity';
-import { CartEntity } from 'src/cart/entities/cart.entity';
 import { ApiHideProperty } from '@nestjs/swagger';
+import { BasketItemEntity } from 'src/basket/entities/basket-item.entity';
 
 @Entity('product')
 export class ProductEntity {
@@ -27,10 +28,10 @@ export class ProductEntity {
   @JoinColumn()
   category: CategoryEntity;
 
-  @ApiHideProperty()
-  @ManyToOne(() => CartEntity, (cart) => cart.products)
-  cart: CartEntity;
-
   @Column()
   price: number;
+
+  @ApiHideProperty()
+  @OneToMany(() => BasketItemEntity, (basket) => basket.product)
+  basket: BasketItemEntity[];
 }

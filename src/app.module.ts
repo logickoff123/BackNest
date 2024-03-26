@@ -8,8 +8,7 @@ import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { CartModule } from './cart/cart.module';
-import { OrderModule } from './order/order.module';
+import { BasketModule } from './basket/basket.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,8 +24,7 @@ import { OrderModule } from './order/order.module';
     ProductModule,
     UsersModule,
     AuthModule,
-    CartModule,
-    OrderModule,
+    BasketModule,
   ],
   controllers: [],
   providers: [],

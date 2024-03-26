@@ -1,5 +1,7 @@
+import { Basket } from 'src/basket/entities/basket.entity';
 import {
   Column,
+  OneToOne,
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
@@ -24,4 +26,6 @@ export class UserEntity {
   updatedAt: Date;
   cart: any;
   orders: any;
+  @OneToOne(() => Basket, (basket) => basket.user)
+  basket: Basket;
 }
