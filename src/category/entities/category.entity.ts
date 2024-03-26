@@ -22,4 +22,5 @@ export class CategoryEntity {
   @ApiHideProperty()
   @OneToMany(() => ProductEntity, (product) => product.category)
   products: ProductEntity[];
+  orders: any;
 }

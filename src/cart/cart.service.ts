@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdatecartDto } from './dto/update-cart.dto';
@@ -8,6 +9,9 @@ import { ProductEntity } from 'src/product/entities/product.entity';
 
 @Injectable()
 export class CartService {
+  delete(_user: any) {
+    throw new Error('Method not implemented.');
+  }
   constructor(
     @InjectRepository(CartEntity)
     private cartRepository: Repository<CartEntity>,
@@ -15,7 +19,7 @@ export class CartService {
     private productRepository: Repository<ProductEntity>,
   ) {}
 
-  async create(dto: CreateCartDto) {
+  async create(id: number, dto: CreateCartDto) {
     const product = await this.productRepository.findOne({
       where: { id: dto.productId },
     });
@@ -26,7 +30,8 @@ export class CartService {
     const cart = new CartEntity();
     cart.productId = dto.productId;
     cart.quantity = dto.quantity;
-    cart.price = product.price; // Устанавливаем цену из таблицы product_card
+    cart.price = product.price;
+    cart.userId = id;
 
     return this.cartRepository.save(cart);
   }
@@ -36,7 +41,7 @@ export class CartService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async update(id: number, dto: UpdatecartDto) {
+  async update(id: number, _dto: UpdatecartDto) {
     const toUpdate = await this.cartRepository.findOneBy({ id });
     if (!toUpdate) {
       throw new BadRequestException(`Запись с id=${id} не найдена`);
@@ -53,7 +58,7 @@ export class CartService {
     let totalPrice = 0;
 
     cartItems.forEach((cartItem) => {
-      totalPrice += cartItem.price * cartItem.quantity; // Вычисляем общую сумму для каждой записи в корзине
+      totalPrice += cartItem.price * cartItem.quantity;
     });
 
     return totalPrice;

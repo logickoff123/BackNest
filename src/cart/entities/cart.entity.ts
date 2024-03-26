@@ -1,6 +1,6 @@
 import { ApiHideProperty } from '@nestjs/swagger';
-import { ProductEntity } from 'src/product/entities/product.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ProductEntity } from 'src/product/entities/product.entity';
 
 @Entity('cart')
 export class CartEntity {
@@ -13,6 +13,9 @@ export class CartEntity {
 
   @Column()
   productId: number;
+
+  @Column()
+  userId: number;
 
   @Column()
   quantity: number;

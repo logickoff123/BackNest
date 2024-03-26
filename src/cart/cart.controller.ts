@@ -6,12 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdatecartDto } from './dto/update-cart.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @ApiTags('cart')
 @Controller('cart')
@@ -19,8 +21,11 @@ export class CartController {
   constructor(private readonly cartService: CartService) {}
 
   @Post()
-  async create(@Body(new ValidationPipe()) createCartDto: CreateCartDto) {
-    return this.cartService.create(createCartDto);
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  async create(@Req() req, @Body() createCartDto: CreateCartDto) {
+    const { id } = req.user;
+    return this.cartService.create(id, createCartDto);
   }
 
   @Get()
@@ -28,9 +33,9 @@ export class CartController {
     return this.cartService.findAll();
   }
 
-  @Get('totalPrice')
-  async calculateTotalPrice(): Promise<number> {
-    return this.cartService.calculateTotalPrice();
+  @Get('total-price')
+  async getTotalPrice(): Promise<number> {
+    return await this.cartService.calculateTotalPrice();
   }
 
   @Patch(':id')
