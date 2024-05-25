@@ -10,6 +10,9 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { BasketModule } from './basket/basket.module';
 import { OrderModule } from './order/order.module';
+import { RoleModule } from './role/role.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './auth/guards/role.guard';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -27,8 +30,14 @@ import { OrderModule } from './order/order.module';
     AuthModule,
     BasketModule,
     OrderModule,
+    RoleModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule {}

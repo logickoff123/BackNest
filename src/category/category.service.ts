@@ -16,7 +16,7 @@ export class CategoryService {
   }
 
   findAll() {
-    return `This action returns all category`;
+    return this.repository.find();
   }
 
   findOne(id: number) {

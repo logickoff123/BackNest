@@ -19,7 +19,7 @@ export class AuthService {
   ) {}
 
   async validateUser(username: string, password: string): Promise<any> {
-    const user = await this.usersService.findByUsername(username);
+    const user = await this.usersService.findByUserName(username);
 
     if (user && user.password === password) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -39,9 +39,10 @@ export class AuthService {
     try {
       const userData = await this.usersService.create(dto);
 
-      return {
-        token: this.jwtService.sign({ id: userData.id }),
-      };
+      token: this.jwtService.sign({
+        id: userData.id,
+        role: userData.role.name,
+      });
     } catch (err) {
       // throw new ForbiddenException('Ошибка при регистрации');
       throw new ForbiddenException(err.message);
@@ -50,7 +51,7 @@ export class AuthService {
 
   async login(user: UserEntity) {
     return {
-      token: this.jwtService.sign({ id: user.id }),
+      token: this.jwtService.sign({ id: user.id, role: user.role.name }), // содержание роли (передаеться рроль в зависимости от кого регестрируюсь)
     };
   }
 }
