@@ -12,6 +12,9 @@ async function bootstrap() {
   app.enableCors({origin : ['http://localhost:3000','http://localhost:7777','http://89.169.130.221:8080'],allowedHeaders:['*']});
   app.setGlobalPrefix('api');
   app.useStaticAssets(join(__dirname, '../../Front/out/'))
+  app.useStaticAssets(join(__dirname, '../X_images/product/'), {
+    prefix: '/assets/images/uploaded/product'
+  })
   app.useGlobalPipes(new ValidationPipe());
   const roleService = app.get(RoleService);
   const useradmin = app.get(UsersService);
