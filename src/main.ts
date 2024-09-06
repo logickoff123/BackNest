@@ -1,14 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { RoleService } from './role/role.service';
 import { UsersService } from './users/users.service';
+import { join } from 'path';
+
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.enableCors({origin : ['http://localhost:3000','http://localhost:7777'],allowedHeaders:['*']});
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.enableCors({origin : ['http://localhost:3000','http://localhost:7777','http://89.169.130.221:8080'],allowedHeaders:['*']});
   app.setGlobalPrefix('api');
+  app.useStaticAssets(join(__dirname, '../../Front/out/'))
   app.useGlobalPipes(new ValidationPipe());
   const roleService = app.get(RoleService);
   const useradmin = app.get(UsersService);
